@@ -26,6 +26,6 @@ def get_data():
 
     scalar = StandardScaler()
     scalar.fit(symptoms)
-    symptoms = scalar.transform(symptoms)
+    # symptoms = scalar.transform(symptoms)
 
     return diseases, symptoms, encoder

@@ -79,8 +79,8 @@ class DoggySymptom(object):
         plt.legend()
         plt.show()
 
-        acc_train = self.history.history['acc']
-        acc_val = self.history.history['val_acc']
+        acc_train = self.history.history['accuracy']
+        acc_val = self.history.history['val_accuracy']
         plt.plot(np.arange(1,num_epoches+1), acc_train, 'r', label='Training Accuracy')
         plt.plot(np.arange(1,num_epoches+1), acc_val, 'b', label='validation Accuracy')
         plt.title('Training and Validation Accuracy')
