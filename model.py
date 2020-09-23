@@ -65,6 +65,7 @@ class DoggySymptom(object):
                             validation_split=validation_split
                             )
         self.plot_metrics()
+        self.save_model()
 
     def plot_metrics(self):
         loss_train = self.history.history['loss']
@@ -98,7 +99,7 @@ class DoggySymptom(object):
                         )
         self.model = loaded_model
 
-    def save_model(self ,model_weights):
+    def save_model(self):
         self.model.save(model_weights)
 
     def predicts(self,X):
