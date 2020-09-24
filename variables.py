@@ -12,7 +12,7 @@ num_classes = 13
 
 learning_rate = 0.0001
 batch_size = 15
-num_epoches = 80
+num_epoches = 85
 validation_split = 0.15
 
 host = '0.0.0.0'
