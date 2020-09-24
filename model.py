@@ -5,7 +5,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 # from tensorflow import keras
-from tensorflow.keras.layers import Dense, Input, Dropout, Embedding, LSTM, BatchNormalization
+from tensorflow.keras.layers import Dense, Input, Dropout, BatchNormalization
 from tensorflow.keras.models import model_from_json, load_model
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
@@ -29,27 +29,23 @@ class DoggySymptom(object):
         self.encoder = encoder
         print("Input Shape : {}".format(self.X.shape))
         print("Label Shape : {}".format(self.Y.shape))
+        print("No: of Output classes : {}".format(len(set(self.Y))))
 
     def classifier(self):
         n_features = self.X.shape[1]
-        num_classes = len(self.Y)
+        num_classes = len(set(self.Y))
         inputs = Input(shape=(n_features,))
         x = Dense(dense1, activation='relu')(inputs)
         x = Dense(dense2, activation='relu')(x)
         x = Dense(dense2, activation='relu')(x)
-        x = Dense(dense2, activation='relu')(x)
-        x = Dense(dense2, activation='relu')(x)
         x = BatchNormalization()(x)
-        x = Dropout(keep_prob)(x)
         x = Dense(dense3, activation='relu')(x)
         x = Dense(dense3, activation='relu')(x)
-        x = Dense(dense3, activation='relu')(x)
-        x = Dense(dense3, activation='relu')(x)
-        x = BatchNormalization()(x)
+        x = Dense(dense4, activation='relu')(x)
+        x = Dense(dense4, activation='relu')(x)
         x = Dropout(keep_prob)(x)
         outputs = Dense(num_classes, activation='softmax')(x)
         self.model = Model(inputs, outputs)
-
 
     def train(self):
         self.model.compile(
