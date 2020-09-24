@@ -15,6 +15,9 @@ batch_size = 15
 num_epoches = 80
 validation_split = 0.15
 
+host = '0.0.0.0'
+port = 5000
+
 model_weights = 'weights/disease_prediction.h5'
 acc_img = "visualization/accuracy_comparison.png"
 loss_img = "visualization/loss_comparison.png"

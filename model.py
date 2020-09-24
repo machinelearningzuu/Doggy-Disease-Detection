@@ -98,8 +98,11 @@ class DoggySymptom(object):
     def save_model(self):
         self.model.save(model_weights)
 
-    def predicts(self,X):
-        return self.model.predict(X)
+    def predicts(self,symtoms):
+        P = self.model.predict(np.array([symtoms]))
+        disease_idxs = P.argsort()[::-1].squeeze()
+        disease_idxs = disease_idxs[:3]
+        return self.encoder.inverse_transform(disease_idxs).tolist()
 
     def run(self):
         if os.path.exists(model_weights):
@@ -109,6 +112,3 @@ class DoggySymptom(object):
             print("Training the model !!!")
             self.classifier()
             self.train()
-
-model = DoggySymptom()
-model.run()
