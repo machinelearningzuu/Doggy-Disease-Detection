@@ -29,5 +29,3 @@ def get_data():
     # symptoms = scalar.transform(symptoms)
 
     return diseases, symptoms, encoder
-
-get_data()

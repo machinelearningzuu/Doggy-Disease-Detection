@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+from matplotlib import cm
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
@@ -16,7 +17,7 @@ logging.getLogger('tensorflow').disabled = True
 
 from variables import*
 from util import*
-
+from sklearn.metrics import confusion_matrix
 '''  Use following command to run the script
                 python model.py
 '''
@@ -104,6 +105,19 @@ class DoggySymptom(object):
         disease_idxs = disease_idxs[:3]
         return self.encoder.inverse_transform(disease_idxs).tolist()
 
+    def plot_confusion_matrix(self):
+        P = self.model.predict(self.X).argmax(axis=-1)
+        cm_ = confusion_matrix(P, self.Y)
+        plt.imshow(cm_, cmap=cm.Blues)
+        plt.xlabel("Predicted labels")
+        plt.ylabel("True labels")
+        # plt.xticks([], [])
+        # plt.yticks([], [])
+        plt.title('Confusion matrix ')
+        plt.colorbar()
+        plt.savefig(confusion_matrix_img)
+        plt.show()
+
     def run(self):
         if os.path.exists(model_weights):
             print("Loading the model !!!")
@@ -112,3 +126,4 @@ class DoggySymptom(object):
             print("Training the model !!!")
             self.classifier()
             self.train()
+        self.plot_confusion_matrix()
