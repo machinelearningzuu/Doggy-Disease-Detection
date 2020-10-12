@@ -29,3 +29,9 @@ def get_data():
     # symptoms = scalar.transform(symptoms)
 
     return diseases, symptoms, encoder
+
+def get_data2():
+    symptoms = np.random.randint(2, size=(n_samples, n_symtoms))
+    diseases = np.random.randint(n_diseases, size=(n_samples))
+
+    return diseases, symptoms
