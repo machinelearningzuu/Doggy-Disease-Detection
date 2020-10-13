@@ -3,15 +3,16 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib import cm
 import os
+import time
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
-# from tensorflow import keras
 from tensorflow.keras.layers import Dense, Input, Dropout, BatchNormalization
 from tensorflow.keras.models import model_from_json, load_model
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
 import tensorflow.keras.backend as K
+K.clear_session()
 import logging
 logging.getLogger('tensorflow').disabled = True
 
@@ -24,8 +25,8 @@ from sklearn.metrics import confusion_matrix
 
 class DoggySymptom(object):
     def __init__(self):
-        diseases, symptoms, encoder = get_data()
-        self.X = symptoms
+        diseases, symtoms,encoder = get_chatbot_data()
+        self.X = symtoms
         self.Y = diseases
         self.encoder = encoder
         print("Input Shape : {}".format(self.X.shape))
@@ -61,8 +62,8 @@ class DoggySymptom(object):
                             epochs=num_epoches,
                             validation_split=validation_split
                             )
-        self.plot_metrics()
-        self.save_model()
+        # self.plot_metrics()
+        # self.save_model()
 
     def plot_metrics(self):
         loss_train = self.history.history['loss']
@@ -124,6 +125,17 @@ class DoggySymptom(object):
             self.load_model(model_weights)
         else:
             print("Training the model !!!")
+            t1_train = time.time()
+            print(t1_train)
+
             self.classifier()
+            t2_train = time.time()
+            print(t2_train - t1_train)
+
             self.train()
-        self.plot_confusion_matrix()
+            t3_train = time.time()
+            print(t3_train - t2_train)
+        # self.plot_confusion_matrix()
+
+model = DoggySymptom()
+model.run()
