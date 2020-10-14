@@ -44,13 +44,11 @@ def get_data():
     diseases =  df[df_cols[-1]].values
     symptoms =  df[df_cols[:-1]].values
 
-<<<<<<< Updated upstream
     sample_count = dict(Counter(diseases))
     relevant_diseases = [k for k,v in sample_count.items() if v > min_samples]
     data = df.loc[df[df_cols[-1]].isin(relevant_diseases)]
     diseases =  data[df_cols[-1]].values
     symptoms =  data[df_cols[:-1]].values
-=======
     all_diseases = list(set(Y))
     all_symtoms = []
     for i in range(X.shape[0]):
@@ -83,7 +81,6 @@ def get_data():
         
     symtoms = symtoms[all_idxs]
     diseases = diseases[all_idxs]
->>>>>>> Stashed changes
 
     diseases, symptoms = shuffle(diseases, symptoms)
     encoder = LabelEncoder()
