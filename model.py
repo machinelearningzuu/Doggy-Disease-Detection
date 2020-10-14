@@ -19,6 +19,7 @@ from variables import*
 from util import*
 from sklearn.metrics import confusion_matrix
 '''  Use following command to run the script
+
                 python model.py
 '''
 
@@ -31,22 +32,6 @@ class DoggySymptom(object):
         print("Input Shape : {}".format(self.X.shape))
         print("Label Shape : {}".format(self.Y.shape))
         print("No: of Output classes : {}".format(len(set(self.Y))))
-
-    # def classifier(self):
-    #     n_features = self.X.shape[1]
-    #     num_classes = len(set(self.Y))
-    #     inputs = Input(shape=(n_features,))
-    #     x = Dense(dense1, activation='relu')(inputs)
-    #     x = Dense(dense2, activation='relu')(x)
-    #     x = Dense(dense2, activation='relu')(x)
-    #     x = BatchNormalization()(x)
-    #     x = Dense(dense3, activation='relu')(x)
-    #     x = Dense(dense3, activation='relu')(x)
-    #     x = Dense(dense4, activation='relu')(x)
-    #     x = Dense(dense4, activation='relu')(x)
-    #     x = Dropout(keep_prob)(x)
-    #     outputs = Dense(num_classes, activation='softmax')(x)
-    #     self.model = Model(inputs, outputs)
 
     def classifier(self):
 
@@ -127,33 +112,33 @@ class DoggySymptom(object):
         plt.imshow(cm_, cmap=cm.Blues)
         plt.xlabel("Predicted labels")
         plt.ylabel("True labels")
-        # plt.xticks([], [])
-        # plt.yticks([], [])
         plt.title('Confusion matrix ')
         plt.colorbar()
         plt.savefig(confusion_matrix_img)
         plt.show()
 
+    def predict_precautions(self, symtoms, all_diseases, all_symtoms):
+        symtoms = process_prediction_data(symtoms, all_diseases, all_symtoms)
+        P = self.model.predict(np.array([symtoms]))
+        label = P.argmax(axis=-1)[0]
+        disease = all_diseases[label]
+        precausions = get_precautions(disease)
+        print(precausions, disease)
+        return precausions, disease
+
     def run(self):
         if os.path.exists(model_weights):
             print("Loading the model !!!")
-            t1_train = time.time()
             self.load_model(model_weights)
-            t2_train = time.time()
-            print(t2_train - t1_train)
         else:
-            print("Training the model !!!")
-            t1_train = time.time()
-            print(t1_train)
-
             self.classifier()
-            t2_train = time.time()
-            print(t2_train - t1_train)
-
             self.train()
-            t3_train = time.time()
-            print(t3_train - t2_train)
         # self.plot_confusion_matrix()
 
-model = DoggySymptom()
-model.run()
+# symtoms = ['Fever','Nasal Discharge','Lethargy','Swollen Lymph nodes']
+
+# model = DoggySymptom()
+# model.run()
+# model.predict_precautions(symtoms, all_diseases, all_symtoms)
+
+

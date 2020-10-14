@@ -1,5 +1,6 @@
 import os
 data_path = 'data/symtomdata.csv'
+precausion_path = 'data/precausions.csv'
 min_samples = 1800
 total_samples = 3000
 seed = 42
@@ -12,7 +13,7 @@ keep_prob = 0.3
 num_classes = 13
 
 learning_rate = 0.0001
-batch_size = 715
+batch_size = 600
 num_epoches = 10
 validation_split = 0.15
 
@@ -29,25 +30,7 @@ confusion_matrix_img = "visualization/confusion_matrix.png"
 n_symtoms = 20
 n_diseases = 10
 n_samples = 5000
-stmtoms =  ['Itchin_and_redness_and_discharge_from_ear',
-            'swelling_of_ears',
-            'hearing_loss',
-            'bleeding_from_ear',
-            'Discharge_redness_or_swelling_eyes',
-            'bulging_of_eyes',
-            'bleeding_from_eyes', 
-            'blindness_of_eyes',
-            'clouding_in_eyes', 
-            'yellowing_of_eyes', 
-            'abnormal_gum_color']
-
-diseases = ['kennel cough', 
-            'ulcer', 
-            'back problems', 
-            'Mouth Cancer', 
-            'paralysis', 
-            'pneumonia', 
-            'parasites', 
-            'epilepsy', 
-            'heartworm disease', 
-            'Cyst']
+all_symtoms =  ['Acute blindness', 'Urine infection', 'Red bumps', 'Loss of Fur', 'Licking', 'Grinning appearance', 'Coughing', 'Eye Discharge', 'Seizures', 'excess jaw tone', 'Coma', 'Weakness', 'Wounds', 'Neurological Disorders', 'blood in stools', 'Stiff and hard tail', 'Dry Skin', 'Lameness', 'Swelling of gum', 'Fever', 'Bloated Stomach', 'Face rubbing', 'Aggression', 'Wrinkled forehead', 'Lumps', 'Plaque', 'Blindness', 'Weight Loss', 'Swollen Lymph nodes', 'Excessive Salivation', 'Loss of Consciousness', 'Tender abdomen', 'Purging', 'Dandruff', 'Loss of appetite', 'Pale gums', 'Collapse', 'Constipation', 'Hunger', 'Discomfort', 'Pain', 'Paralysis', 'Red patches', 'Fur loss', 'Losing sight', 'WeightLoss', 'Sepsis', 'Increased drinking and urination', 'Bad breath', 'Itchy skin', 'Receding gum', 'Irritation', 'Enlarged Liver', 'Eating grass', 'Nasal Discharge', 'Depression', 'lethargy', 'Stiffness of muscles', 'Eating less than usual', 'Scratching', 'Severe Dehydration', 'Tartar', 'Cataracts', 'Swelling', 'Redness of gum', 'Diarrhea', 'Scabs', 'Breathing Difficulty', 'Difficulty Urinating', 'Continuously erect and stiff ears', 'Glucose in urine', 'Burping', 'Passing gases', 'Vomiting', 'Blood in urine', 'Smelly', 'Redness around Eye area', 'Bleeding of gum', 'Bloody discharge', 'Redness of skin', 'Lethargy', 'Abdominal pain', 'Lack of energy', 'Anorexia', 'Heart Complication', 'Yellow gums']
+all_diseases = ['hepatitis ', 'diabetes', 'cancers', 'allergies', 'tetanus ', 'gingitivis', 'skin rashes', 'distemper', 'parvovirus', 'chronic kidney disease ', 'tick fever', 'gastrointestinal disease']
+all_symtoms = list(map(str.lower,all_symtoms))
+all_diseases = list(map(str.lower,all_diseases))
