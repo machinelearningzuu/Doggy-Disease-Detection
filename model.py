@@ -18,6 +18,9 @@ logging.getLogger('tensorflow').disabled = True
 from variables import*
 from util import*
 from sklearn.metrics import confusion_matrix
+
+np.random.seed(seed)
+
 '''  Use following command to run the script
                 python model.py
 '''

@@ -1,6 +1,13 @@
 import os
+<<<<<<< Updated upstream
 data_path = 'data/DiseasePredictorA.csv'
 min_samples = 20
+=======
+data_path = 'data/symtomdata.csv'
+min_samples = 1800
+total_samples = 3000
+seed = 42
+>>>>>>> Stashed changes
 
 dense1 = 1024
 dense2 = 512
@@ -11,9 +18,15 @@ keep_prob = 0.3
 num_classes = 13
 
 learning_rate = 0.0001
+<<<<<<< Updated upstream
 batch_size = 64
 num_epoches = 85
 validation_split = 0.1
+=======
+batch_size = 715
+num_epoches = 10
+validation_split = 0.15
+>>>>>>> Stashed changes
 
 host = '0.0.0.0'
 port = 5000
