@@ -6,6 +6,8 @@ from sklearn.utils import shuffle
 from collections import Counter
 import math
 
+np.random.seed(seed)
+
 # def get_data():
 #     df = pd.read_csv(data_path)
 #     df_cols = df.columns.values
@@ -32,13 +34,18 @@ import math
 #     return diseases, symptoms, encoder
 
 def get_data():
-    df = pd.read_csv(data_path)
+    df = pd.read_csv(data_path, error_bad_lines=False)
     df_cols = df.columns.values
-    df[df_cols[0]] = df[df_cols[0]].str.lower()
+    df[df_cols[-1]] = df[df_cols[-1]].str.lower()
 
-    Y = df[df_cols[0]].values
-    X = df[df_cols[1:]].values
+    diseases =  df[df_cols[-1]].values
+    symptoms =  df[df_cols[:-1]].values
 
+    sample_count = dict(Counter(diseases))
+    relevant_diseases = [k for k,v in sample_count.items() if v > min_samples]
+    data = df.loc[df[df_cols[-1]].isin(relevant_diseases)]
+    diseases =  data[df_cols[-1]].values
+    symptoms =  data[df_cols[:-1]].values
     all_diseases = list(set(Y))
     all_symtoms = []
     for i in range(X.shape[0]):
@@ -57,20 +64,34 @@ def get_data():
 
     symtoms, diseases = shuffle(symtoms, Y)
 
-    all_idxs = [] 
-    for disease in all_diseases:
-        idx_disease = np.nonzero(diseases == disease)[0]
-        if len(idx_disease) < min_samples:
-            rand_idxs = idx_disease
-        else:
-            rand_idxs = np.random.choice(idx_disease, min_samples, replace=False).tolist()
-        all_idxs.extend(rand_idxs)
+    all_idxs = np.random.choice(len(diseases), total_samples, replace=False)
+    # all_idxs = [] 
+    # for disease in all_diseases:
+    #     idx_disease = np.nonzero(diseases == disease)[0]
+    #     print(len(idx_disease))
+    #     if len(idx_disease) < min_samples:
+    #         rand_idxs = idx_disease
+    #     else:
+    #         # rand_idxs = np.random.choice(idx_disease, min_samples, replace=False).tolist()
+    #         rand_idxs = idx_disease[:min_samples]
+    #     all_idxs.extend(rand_idxs)
         
     symtoms = symtoms[all_idxs]
     diseases = diseases[all_idxs]
 
+    diseases, symptoms = shuffle(diseases, symptoms)
     encoder = LabelEncoder()
     encoder.fit(diseases)
     diseases = encoder.transform(diseases)
 
-    return diseases, symtoms, encoder
+    scalar = StandardScaler()
+    scalar.fit(symptoms)
+    # symptoms = scalar.transform(symptoms)
+
+    return diseases, symptoms, encoder
+
+def get_data2():
+    symptoms = np.random.randint(2, size=(n_samples, n_symtoms))
+    diseases = np.random.randint(n_diseases, size=(n_samples))
+
+    return diseases, symptoms
