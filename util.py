@@ -6,38 +6,40 @@ from sklearn.utils import shuffle
 from collections import Counter
 import math
 
+# def get_data():
+#     df = pd.read_csv(data_path)
+#     df_cols = df.columns.values
+#     df[df_cols[-1]] = df[df_cols[-1]].str.lower()
+
+#     diseases =  df[df_cols[-1]].values
+#     symptoms =  df[df_cols[:-1]].values
+
+#     sample_count = dict(Counter(diseases))
+#     relevant_diseases = [k for k,v in sample_count.items() if v > min_samples]
+#     data = df.loc[df[df_cols[-1]].isin(relevant_diseases)]
+#     diseases =  data[df_cols[-1]].values
+#     symptoms =  data[df_cols[:-1]].values
+
+#     diseases, symptoms = shuffle(diseases, symptoms)
+#     encoder = LabelEncoder()
+#     encoder.fit(diseases)
+#     diseases = encoder.transform(diseases)
+
+#     scalar = StandardScaler()
+#     scalar.fit(symptoms)
+#     # symptoms = scalar.transform(symptoms)
+
+#     return diseases, symptoms, encoder
+
 def get_data():
     df = pd.read_csv(data_path)
     df_cols = df.columns.values
-    df[df_cols[-1]] = df[df_cols[-1]].str.lower()
-
-    diseases =  df[df_cols[-1]].values
-    symptoms =  df[df_cols[:-1]].values
-
-    sample_count = dict(Counter(diseases))
-    relevant_diseases = [k for k,v in sample_count.items() if v > min_samples]
-    data = df.loc[df[df_cols[-1]].isin(relevant_diseases)]
-    diseases =  data[df_cols[-1]].values
-    symptoms =  data[df_cols[:-1]].values
-
-    diseases, symptoms = shuffle(diseases, symptoms)
-    encoder = LabelEncoder()
-    encoder.fit(diseases)
-    diseases = encoder.transform(diseases)
-
-    scalar = StandardScaler()
-    scalar.fit(symptoms)
-    # symptoms = scalar.transform(symptoms)
-
-    return diseases, symptoms, encoder
-
-def get_chatbot_data():
-    df = pd.read_csv(chatbot_data_path)
-    df_cols = df.columns.values
-    df[df_cols[-1]] = df[df_cols[-1]].str.lower()
+    df[df_cols[0]] = df[df_cols[0]].str.lower()
 
     Y = df[df_cols[0]].values
     X = df[df_cols[1:]].values
+
+    all_diseases = list(set(Y))
     all_symtoms = []
     for i in range(X.shape[0]):
         X_ = X[i,:].tolist()
@@ -54,6 +56,18 @@ def get_chatbot_data():
                symtoms[i,idx] = 1
 
     symtoms, diseases = shuffle(symtoms, Y)
+
+    all_idxs = [] 
+    for disease in all_diseases:
+        idx_disease = np.nonzero(diseases == disease)[0]
+        if len(idx_disease) < min_samples:
+            rand_idxs = idx_disease
+        else:
+            rand_idxs = np.random.choice(idx_disease, min_samples, replace=False).tolist()
+        all_idxs.extend(rand_idxs)
+        
+    symtoms = symtoms[all_idxs]
+    diseases = diseases[all_idxs]
 
     encoder = LabelEncoder()
     encoder.fit(diseases)

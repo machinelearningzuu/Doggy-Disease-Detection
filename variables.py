@@ -1,7 +1,6 @@
 import os
-data_path = 'data/DiseasePredictorA.csv'
-chatbot_data_path = 'data/dataset.csv'
-min_samples = 8
+data_path = 'data/DiseaseCombinationsALL.csv'
+min_samples = 800
 
 dense1 = 1024
 dense2 = 512
@@ -13,7 +12,7 @@ keep_prob = 0.3
 
 learning_rate = 0.0001
 batch_size = 64
-num_epoches = 10
+num_epoches = 30
 validation_split = 0.15
 
 host = '0.0.0.0'

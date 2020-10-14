@@ -4,11 +4,10 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 import os
 import time
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Input, Dropout, BatchNormalization
-from tensorflow.keras.models import model_from_json, load_model
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import model_from_json, load_model, Sequential, Model
 from tensorflow.keras.optimizers import Adam
 
 import tensorflow.keras.backend as K
@@ -25,7 +24,7 @@ from sklearn.metrics import confusion_matrix
 
 class DoggySymptom(object):
     def __init__(self):
-        diseases, symtoms,encoder = get_chatbot_data()
+        diseases, symtoms,encoder = get_data()
         self.X = symtoms
         self.Y = diseases
         self.encoder = encoder
@@ -33,21 +32,37 @@ class DoggySymptom(object):
         print("Label Shape : {}".format(self.Y.shape))
         print("No: of Output classes : {}".format(len(set(self.Y))))
 
+    # def classifier(self):
+    #     n_features = self.X.shape[1]
+    #     num_classes = len(set(self.Y))
+    #     inputs = Input(shape=(n_features,))
+    #     x = Dense(dense1, activation='relu')(inputs)
+    #     x = Dense(dense2, activation='relu')(x)
+    #     x = Dense(dense2, activation='relu')(x)
+    #     x = BatchNormalization()(x)
+    #     x = Dense(dense3, activation='relu')(x)
+    #     x = Dense(dense3, activation='relu')(x)
+    #     x = Dense(dense4, activation='relu')(x)
+    #     x = Dense(dense4, activation='relu')(x)
+    #     x = Dropout(keep_prob)(x)
+    #     outputs = Dense(num_classes, activation='softmax')(x)
+    #     self.model = Model(inputs, outputs)
+
     def classifier(self):
+
+        self.model = Sequential()
         n_features = self.X.shape[1]
         num_classes = len(set(self.Y))
-        inputs = Input(shape=(n_features,))
-        x = Dense(dense1, activation='relu')(inputs)
-        x = Dense(dense2, activation='relu')(x)
-        x = Dense(dense2, activation='relu')(x)
-        x = BatchNormalization()(x)
-        x = Dense(dense3, activation='relu')(x)
-        x = Dense(dense3, activation='relu')(x)
-        x = Dense(dense4, activation='relu')(x)
-        x = Dense(dense4, activation='relu')(x)
-        x = Dropout(keep_prob)(x)
-        outputs = Dense(num_classes, activation='softmax')(x)
-        self.model = Model(inputs, outputs)
+        self.model.add(Dense(dense1, activation='relu', input_shape=(n_features,)))
+        self.model.add(Dense(dense2, activation='relu'))
+        self.model.add(Dense(dense2, activation='relu'))
+        self.model.add(BatchNormalization())
+        self.model.add(Dense(dense3, activation='relu'))
+        self.model.add(Dense(dense3, activation='relu'))
+        self.model.add(Dense(dense4, activation='relu'))
+        self.model.add(Dense(dense4, activation='relu'))
+        self.model.add(Dropout(keep_prob))
+        self.model.add(Dense(num_classes, activation='softmax'))
 
     def train(self):
         self.model.compile(
@@ -63,7 +78,7 @@ class DoggySymptom(object):
                             validation_split=validation_split
                             )
         # self.plot_metrics()
-        # self.save_model()
+        self.save_model()
 
     def plot_metrics(self):
         loss_train = self.history.history['loss']
@@ -122,7 +137,10 @@ class DoggySymptom(object):
     def run(self):
         if os.path.exists(model_weights):
             print("Loading the model !!!")
+            t1_train = time.time()
             self.load_model(model_weights)
+            t2_train = time.time()
+            print(t2_train - t1_train)
         else:
             print("Training the model !!!")
             t1_train = time.time()
