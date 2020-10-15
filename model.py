@@ -123,6 +123,7 @@ class DoggySymptom(object):
         label = P.argmax(axis=-1)[0]
         disease = all_diseases[label]
         precausions = get_precautions(disease)
+        precausions = {'precausion'+str(i): precausion for (i,precausion) in enumerate(precausions)}    
         print(precausions, disease)
         return precausions, disease
 

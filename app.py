@@ -28,9 +28,8 @@ def predict():
     message = request.get_json(force=True)
     symtoms = eval(message['symtoms'])
     precausions, disease = model.predict_precautions(symtoms, all_diseases, all_symtoms)
-
     response = {
-            'diseases': diseases,
+            'diseases': disease,
             'precausions': precausions
     }
     return jsonify(response)

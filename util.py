@@ -57,9 +57,9 @@ def process_prediction_data(X, all_diseases, all_symtoms):
     return symtoms
 
 def get_precautions(disease):
-    disease = disease.lower()
+    disease = disease.strip().lower()
     df = pd.read_csv(precausion_path)
     df_cols = df.columns.values
     df[df_cols[0]] = df[df_cols[0]].str.lower()
-    row = df.loc[df[df_cols[0]] == disease].values[1:]
+    row = df.loc[df[df_cols[0]] == disease].values[0][1:]
     return row
