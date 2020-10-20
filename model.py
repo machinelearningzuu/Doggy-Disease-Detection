@@ -134,6 +134,7 @@ class DoggySymptom(object):
         else:
             self.classifier()
             self.train()
+            print("Saving the model !!!")
         # self.plot_confusion_matrix()
 
 # symtoms = ['Fever','Nasal Discharge','Lethargy','Swollen Lymph nodes']

@@ -9,8 +9,9 @@ import logging
 logging.getLogger('tensorflow').disabled = True
 
 import tensorflow as tf
-physical_devices = tf.config.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(physical_devices[0], True)
+if tf.config.list_physical_devices('GPU'):
+        physical_devices = tf.config.list_physical_devices('GPU')
+        tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 from flask import Flask
 from flask import jsonify
@@ -35,4 +36,4 @@ def predict():
     return jsonify(response)
 
 if __name__ == "__main__":
-    app.run(debug=True, host=host, port=port, threaded=False)
+    app.run(debug=True, host=host, port=port, threaded=False, use_reloader=False)
