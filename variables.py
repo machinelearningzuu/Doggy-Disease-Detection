@@ -20,8 +20,8 @@ validation_split = 0.15
 host = '0.0.0.0'
 port = 5000
 
+model_converter = "weights/model.tflite"
 model_weights = 'weights/disease_prediction.h5'
-model2_weights = 'weights/disease_prediction2.h5'
 acc_img = "visualization/accuracy_comparison.png"
 loss_img = "visualization/loss_comparison.png"
 confusion_matrix_img = "visualization/confusion_matrix.png"

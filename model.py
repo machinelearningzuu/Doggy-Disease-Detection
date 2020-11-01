@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 import os
 import time
+import pathlib
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Input, Dropout, BatchNormalization
@@ -35,19 +36,24 @@ class DoggySymptom(object):
 
     def classifier(self):
 
-        self.model = Sequential()
         n_features = self.X.shape[1]
         num_classes = len(set(self.Y))
-        self.model.add(Dense(dense1, activation='relu', input_shape=(n_features,)))
-        self.model.add(Dense(dense2, activation='relu'))
-        self.model.add(Dense(dense2, activation='relu'))
-        self.model.add(BatchNormalization())
-        self.model.add(Dense(dense3, activation='relu'))
-        self.model.add(Dense(dense3, activation='relu'))
-        self.model.add(Dense(dense4, activation='relu'))
-        self.model.add(Dense(dense4, activation='relu'))
-        self.model.add(Dropout(keep_prob))
-        self.model.add(Dense(num_classes, activation='softmax'))
+        inputs = Input(shape=(n_features,))
+        x = Dense(dense1, activation='relu')(inputs)
+        x = Dense(dense2, activation='relu')(x)
+        x = Dense(dense2, activation='relu')(x)
+        x = BatchNormalization()(x)
+        x = Dense(dense3, activation='relu')(x)
+        x = Dense(dense3, activation='relu')(x)
+        x = Dense(dense4, activation='relu')(x)
+        x = Dense(dense4, activation='relu')(x)
+        x = Dropout(keep_prob)(x)
+        outputs = Dense(num_classes, activation='softmax')(x)
+
+        self.model = Model(
+                        inputs,
+                        outputs
+                        )
 
     def train(self):
         self.model.compile(
@@ -88,23 +94,49 @@ class DoggySymptom(object):
         plt.legend()
         plt.show()
 
-    def load_model(self, model_weights):
-        loaded_model = load_model(model_weights)
-        loaded_model.compile(
-                        loss='sparse_categorical_crossentropy',
-                        optimizer=Adam(learning_rate),
-                        metrics=['accuracy'],
-                        )
-        self.model = loaded_model
-
     def save_model(self):
+        print("Saving the model !!!")
         self.model.save(model_weights)
 
-    def predicts(self,symtoms):
-        P = self.model.predict(np.array([symtoms]))
-        disease_idxs = P.argsort()[::-1].squeeze()
-        disease_idxs = disease_idxs[:3]
-        return self.encoder.inverse_transform(disease_idxs).tolist()
+    def TFconverter(self):
+        converter = tf.compat.v1.lite.TFLiteConverter.from_keras_model_file(model_weights)
+        converter.target_spec.supported_ops = [
+                                tf.lite.OpsSet.TFLITE_BUILTINS,
+                                tf.lite.OpsSet.SELECT_TF_OPS
+                                ]
+        converter.optimizations = [tf.lite.Optimize.DEFAULT]
+        tflite_model = converter.convert()
+
+        model_converter_file = pathlib.Path(model_converter)
+        model_converter_file.write_bytes(tflite_model)
+
+    def TFinterpreter(self):
+        self.interpreter = tf.lite.Interpreter(model_path=model_converter)
+        self.interpreter.allocate_tensors()
+
+        self.input_details = self.interpreter.get_input_details()
+        self.output_details = self.interpreter.get_output_details()
+
+    def Inference(self, symtoms):
+        symtoms = symtoms.astype(np.float32)
+        input_shape = self.input_details[0]['shape']
+        assert np.array_equal(input_shape, symtoms.shape), "Input tensor hasn't correct dimension"
+
+        self.interpreter.set_tensor(self.input_details[0]['index'], symtoms)
+
+        self.interpreter.invoke()
+
+        output_data = self.interpreter.get_tensor(self.output_details[0]['index'])
+        return output_data
+
+    def run(self):
+        if not os.path.exists(model_converter):
+            if not os.path.exists(model_weights):
+                self.classifier()
+                self.train()
+
+            self.TFconverter()
+        self.TFinterpreter()    
 
     def plot_confusion_matrix(self):
         P = self.model.predict(self.X).argmax(axis=-1)
@@ -119,28 +151,18 @@ class DoggySymptom(object):
 
     def predict_precautions(self, symtoms, all_diseases, all_symtoms):
         symtoms = process_prediction_data(symtoms, all_diseases, all_symtoms)
-        P = self.model.predict(np.array([symtoms]))
+        symtoms = symtoms.reshape(1,-1)
+        P = self.Inference(symtoms)
         label = P.argmax(axis=-1)[0]
         disease = all_diseases[label]
         precausions = get_precautions(disease)
         precausions = {'precausion'+str(i): precausion for (i,precausion) in enumerate(precausions)}    
-        print(precausions, disease)
         return precausions, disease
-
-    def run(self):
-        if os.path.exists(model_weights):
-            print("Loading the model !!!")
-            self.load_model(model_weights)
-        else:
-            self.classifier()
-            self.train()
-            print("Saving the model !!!")
-        # self.plot_confusion_matrix()
 
 # symtoms = ['Fever','Nasal Discharge','Lethargy','Swollen Lymph nodes']
 
 # model = DoggySymptom()
 # model.run()
-# model.predict_precautions(symtoms, all_diseases, all_symtoms)
+# print(model.predict_precautions(symtoms, all_diseases, all_symtoms))
 
 
