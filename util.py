@@ -13,8 +13,8 @@ def get_data():
     df_cols = df.columns.values
     df[df_cols[0]] = df[df_cols[0]].str.lower()
 
-    Y =  df[df_cols[0]].values
-    X =  df[df_cols[1:]].values
+    Y =  df[df_cols[0]].values   # Input data
+    X =  df[df_cols[1:]].values  # output data
 
     # all_diseases = list(set(Y))
     # all_symtoms = []
@@ -23,7 +23,7 @@ def get_data():
     #     all_symtoms.extend([x for x in X_ if type(x) == str])
     # all_symtoms = list(set(all_symtoms))
 
-    symtoms = np.zeros((len(Y), len(all_symtoms)))
+    symtoms = np.zeros((len(Y), len(all_symtoms))) # input text based data convert into numeric data
     for i in range(X.shape[0]):
         X_ = X[i,:].tolist()
         for j in range(len(X_)):
@@ -40,13 +40,13 @@ def get_data():
     symtoms = symtoms[all_idxs]
     diseases = diseases[all_idxs]
 
-    encoder = LabelEncoder()
+    encoder = LabelEncoder()  # label encode categorial outputs
     encoder.fit(diseases)
     diseases = encoder.transform(diseases)
 
     return diseases, symtoms, encoder
 
-def process_prediction_data(X, all_diseases, all_symtoms):
+def process_prediction_data(X, all_diseases, all_symtoms): # set necessary preprocessing steps for prediction data inputs
     symtoms = np.zeros(len(all_symtoms))
     for j in range(len(X)):
         x = X[j]
@@ -56,7 +56,7 @@ def process_prediction_data(X, all_diseases, all_symtoms):
             symtoms[idx] = 1
     return symtoms
 
-def get_precautions(disease):
+def get_precautions(disease):# get the precausions related to each disease
     disease = disease.strip().lower()
     df = pd.read_csv(precausion_path)
     df_cols = df.columns.values
