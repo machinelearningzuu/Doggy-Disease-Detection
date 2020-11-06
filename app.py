@@ -6,12 +6,12 @@ from variables import *
 from model import DoggySymptom
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import logging
-logging.getLogger('tensorflow').disabled = True
+logging.getLogger('tensorflow').disabled = True  # Prevent display tensorflow warining and memory loading
 
 import tensorflow as tf
-if tf.config.list_physical_devices('GPU'):
+if tf.config.list_physical_devices('GPU'): # Check whether The running instance has GPU or not
         physical_devices = tf.config.list_physical_devices('GPU')
-        tf.config.experimental.set_memory_growth(physical_devices[0], True)
+        tf.config.experimental.set_memory_growth(physical_devices[0], True) # If has set memory growth
 
 from flask import Flask
 from flask import jsonify
