@@ -35,7 +35,7 @@ class DoggySymptom(object):
         print("No: of Output classes : {}".format(len(set(self.Y))))
 
     def classifier(self):
-
+        # Multi layer perceptron model
         n_features = self.X.shape[1]
         num_classes = len(set(self.Y))
         inputs = Input(shape=(n_features,))
@@ -94,28 +94,28 @@ class DoggySymptom(object):
         plt.legend()
         plt.show()
 
-    def save_model(self):
+    def save_model(self):  # Saving the trained model
         print("Saving the model !!!")
         self.model.save(model_weights)
 
-    def TFconverter(self):
+    def TFconverter(self): # For deployment in the mobile devices quantization of the model using tensorflow lite
         converter = tf.compat.v1.lite.TFLiteConverter.from_keras_model_file(model_weights)
         converter.target_spec.supported_ops = [
-                                tf.lite.OpsSet.TFLITE_BUILTINS,
-                                tf.lite.OpsSet.SELECT_TF_OPS
+                                tf.lite.OpsSet.TFLITE_BUILTINS,   # Handling unsupported tensorflow Ops 
+                                tf.lite.OpsSet.SELECT_TF_OPS 
                                 ]
-        converter.optimizations = [tf.lite.Optimize.DEFAULT]
+        converter.optimizations = [tf.lite.Optimize.DEFAULT]      # Set optimization default and it configure between latency, accuracy and model size
         tflite_model = converter.convert()
 
-        model_converter_file = pathlib.Path(model_converter)
-        model_converter_file.write_bytes(tflite_model)
-
+        model_converter_file = pathlib.Path(model_converter) 
+        model_converter_file.write_bytes(tflite_model) # save the tflite model in byte format
+ 
     def TFinterpreter(self):
-        self.interpreter = tf.lite.Interpreter(model_path=model_converter)
+        self.interpreter = tf.lite.Interpreter(model_path=model_converter) # Load tflite model
         self.interpreter.allocate_tensors()
 
-        self.input_details = self.interpreter.get_input_details()
-        self.output_details = self.interpreter.get_output_details()
+        self.input_details = self.interpreter.get_input_details() # Get input details of the model
+        self.output_details = self.interpreter.get_output_details() # Get output details of the model
 
     def Inference(self, symtoms):
         symtoms = symtoms.astype(np.float32)
@@ -124,9 +124,9 @@ class DoggySymptom(object):
 
         self.interpreter.set_tensor(self.input_details[0]['index'], symtoms)
 
-        self.interpreter.invoke()
+        self.interpreter.invoke() # set the inference
 
-        output_data = self.interpreter.get_tensor(self.output_details[0]['index'])
+        output_data = self.interpreter.get_tensor(self.output_details[0]['index']) # Get predictions
         return output_data
 
     def run(self):
